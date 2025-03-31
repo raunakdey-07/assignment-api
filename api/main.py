@@ -199,7 +199,31 @@ jobs:
 async def process_image(file: UploadFile = File(...)):
     content = await process_uploaded_file(file)
     img = Image.open(BytesIO(content))
-    # Add image processing logic here
+
+    try:
+        img = Image.open(BytesIO(content))
+        img = img.convert('RGB') # Ensure image is in RGB format. Necessary for webp.
+        # Add compression logic here
+        buffer = BytesIO()
+        img.save(buffer, 'webp', quality=80)  # Adjust quality as needed
+        compressed_image_bytes = buffer.getvalue()
+
+        # For GA 2.2, check file size
+        if len(compressed_image_bytes) > 1500:
+            return {"answer": "Compressed image is larger than 1500 bytes.  Try a lower quality setting."}
+
+        # Save the compressed image (optional, for testing)
+        # with open("compressed_image.webp", "wb") as f:
+        #     f.write(compressed_image_bytes)
+
+        # Encode as base64 for easier transfer (optional)
+        # encoded_image = base64.b64encode(compressed_image_bytes).decode('utf-8')
+
+        return {"answer": f"Image compressed successfully to {len(compressed_image_bytes)} bytes"}  # Return the size
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Image processing error: {e}")
+
     return {"answer": "Image processed successfully"}
 
 @app.get("/api/wikipedia")

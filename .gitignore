@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -172,3 +173,9 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+=======
+.env
+.venv/
+__pycache__/
+>>>>>>> 866a87d (Added .gitignore)
+.vercel
